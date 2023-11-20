@@ -1,14 +1,42 @@
+resource "aws_key_pair" "cloud_2021" {
+ key_name   = var.key_name
+ public_key = file("~/.ssh/id_ed25519.pub")
+}
 resource "aws_eip" "cloud_2021" {
   instance = aws_instance.cloud_2021.id
   domain   = "vpc"
-  depends_on                = [aws_internet_gateway.gw]
+ depends_on                = [aws_internet_gateway.gw]
 }
 
 output "public_ip" {
   value = aws_instance.cloud_2021.public_ip
 }
 
-resource "aws_security_group" "cloud_2021" {
+resource "aws_internet_gateway" "gw" {
+  vpc_id = aws_vpc.main.id
+
+  tags = {
+    Name = "cloud_2021"
+  }
+}
+resource "aws_route_table" "rt" {
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.gw.id
+  }
+tags = {
+    Name = "cloud_2021"
+  }
+}
+
+resource "aws_route_table_association" "a" {
+  subnet_id      = aws_subnet.main.id
+  route_table_id = aws_route_table.rt.id
+}
+
+resource "aws_security_group" "default" {
   for_each = var.security_groups
 
   name        = each.key
@@ -48,7 +76,7 @@ resource "aws_instance" "cloud_2021" {
   key_name      = var.key_name
   subnet_id              = aws_subnet.main.id
   #vpc_security_group_ids = [module.security_groups.security_group_id["cloud_2023_sg"]] 
-  vpc_security_group_ids = [aws_security_group.default["cloud_2023_sg"].id ]
+  vpc_security_group_ids = [aws_security_group.default["cloud_2021_sg"].id ]
   tags = {
     Name = "cloud_2021"
   }
