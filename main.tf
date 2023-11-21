@@ -1,11 +1,14 @@
 resource "aws_key_pair" "cloud_2021" {
  key_name   = var.key_name
- public_key = file("~/.ssh/id_ed25519.pub")
+ public_key = file("~/.ssh/cloud_2024.pem.pub")
 }
 resource "aws_eip" "cloud_2021" {
   instance = aws_instance.cloud_2021.id
   domain   = "vpc"
- depends_on                = [aws_internet_gateway.gw]
+ #depends_on                = [aws_internet_gateway.gw]
+ tags = {
+   Name = "cloud_2021"
+ }
 }
 
 output "public_ip" {

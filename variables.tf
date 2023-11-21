@@ -9,12 +9,12 @@ variable "ami"{
 
 variable "instance_types" {
   type    = list(string)
-  default = ["t1.micro", "t2.small", "t3.medium"]
+  default = ["t3.micro", "t2.small", "t3.medium"]
 }
 
 variable "key_name" {
     type = string
-    default = ""
+    default = "cloud_2024"
 
 }
 variable "security_groups" {

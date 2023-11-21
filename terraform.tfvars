@@ -8,7 +8,7 @@ security_groups = {
         from_port   = 80
         to_port     = 80
         protocol    = "tcp"
-        cidr_blocks = ["192.168.1.1/32"]
+        cidr_blocks = ["0.0.0.0/0"]
       },
       {
         description = "my_ssh"
@@ -16,7 +16,7 @@ security_groups = {
         from_port   = 22
         to_port     = 22
         protocol    = "tcp"
-        cidr_blocks = ["192.168.1.1/32"]
+        cidr_blocks = ["0.0.0.0/0"]
       },
       {
         description = "ingress rule for http"
@@ -24,7 +24,7 @@ security_groups = {
         from_port   = 443
         to_port     = 443
         protocol    = "tcp"
-        cidr_blocks = ["192.168.1.1/32"]
+        cidr_blocks = ["0.0.0.0/0"]
       }
     ]
     egress_rules = [
@@ -33,21 +33,21 @@ security_groups = {
         from_port   = 8000
         to_port     = 8000
         protocol    = "tcp"
-        cidr_blocks = ["192.168.1.1/32"]
+        cidr_blocks = ["0.0.0.0/0"]
       },
       {
         priority    = 504
         from_port   = 8080
         to_port     = 8080
         protocol    = "tcp"
-        cidr_blocks = ["192.168.1.1/32"]
+        cidr_blocks = ["0.0.0.0/0"]
       },
       {
         priority    = 506
         from_port   = 8888
         to_port     = 8888
         protocol    = "tcp"
-        cidr_blocks = ["192.168.1.1/32"]
+        cidr_blocks = ["0.0.0.0/0"]
       },
     ]
   }
