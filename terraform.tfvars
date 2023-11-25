@@ -50,7 +50,7 @@ security_groups = {
         cidr_blocks = ["0.0.0.0/0"]
       },
     ]
-     egress_rules = [
+    egress_rules = [
       {
         priority    = 502
         from_port   = 0

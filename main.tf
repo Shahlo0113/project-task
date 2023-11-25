@@ -1,14 +1,14 @@
 resource "aws_key_pair" "cloud_2021" {
- key_name   = var.key_name
- public_key = file("~/.ssh/cloud_2024.pem.pub")
+  key_name   = var.key_name
+  public_key = file("~/.ssh/id_ed25519.pub")
 }
 resource "aws_eip" "cloud_2021" {
   instance = aws_instance.cloud_2021.id
   domain   = "vpc"
- #depends_on                = [aws_internet_gateway.gw]
- tags = {
-   Name = "cloud_2021"
- }
+  #depends_on                = [aws_internet_gateway.gw]
+  tags = {
+    Name = "cloud_2021"
+  }
 }
 
 output "public_ip" {
@@ -29,7 +29,7 @@ resource "aws_route_table" "rt" {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.gw.id
   }
-tags = {
+  tags = {
     Name = "cloud_2021"
   }
 }
@@ -77,17 +77,32 @@ resource "aws_instance" "cloud_2021" {
   ami           = var.ami["us-east-1"]
   instance_type = var.instance_types[0]
   key_name      = var.key_name
-  subnet_id              = aws_subnet.main.id
+  subnet_id     = aws_subnet.main.id
   #vpc_security_group_ids = [module.security_groups.security_group_id["cloud_2023_sg"]] 
-  vpc_security_group_ids = [aws_security_group.default["cloud_2021_sg"].id ]
+  vpc_security_group_ids = [aws_security_group.default["cloud_2021_sg"].id]
+
+  user_data = <<-EOF
+              #!/bin/bash
+              sudo yum update -y
+              sudo yum install -y httpd
+              sudo systemctl start httpd.service
+              sudo systemctl enable httpd.service
+              sudo echo "<h1> At $(hostname -f) </h1>" > /var/www/html/index.html                   
+              EOF 
+
   tags = {
     Name = "cloud_2021"
   }
-  }
+}
 
-  resource "aws_vpc" "main" {
+import {
+  to = aws_instance.cloud_2021
+  id = "i-0914bcc15a6fa8caa"
+}
+
+resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
- 
+
   tags = {
     Name = "cloud_2021"
   }
@@ -96,10 +111,12 @@ resource "aws_instance" "cloud_2021" {
 resource "aws_subnet" "main" {
   vpc_id     = aws_vpc.main.id
   cidr_block = "10.0.1.0/24"
- 
+
   map_public_ip_on_launch = true # To ensure the instance gets a public IP
- 
+
   tags = {
     Name = "cloud_2021"
   }
 }
+
+
