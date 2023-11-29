@@ -95,10 +95,10 @@ resource "aws_instance" "cloud_2021" {
   }
 }
 
-import {
-  to = aws_instance.cloud_2021
-  id = "i-0914bcc15a6fa8caa"
-}
+# import {
+#   to = aws_instance.cloud_2021
+#   id = "i-0914bcc15a6fa8caa"
+# }
 
 resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
